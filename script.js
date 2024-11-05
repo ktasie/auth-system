@@ -18,7 +18,7 @@ btn.addEventListener("submit", async (e) => {
   const result = await handleLogin(username, password);
 
   try {
-    if (result.success) {
+    if (result.status) {
       // Post to the API_URL
       window.location.href = "/dashboard.html";
     } else {
@@ -53,7 +53,7 @@ async function handleLogin(username, password) {
       body: JSON.stringify(loginData),
     });
 
-    if (!response.ok) {
+    if (!response.status === "success") {
       throw new Error(await response.text());
     }
 
@@ -63,9 +63,7 @@ async function handleLogin(username, password) {
     // storeTokens(data);
 
     return {
-      success: true,
-      user: data.user,
-      message: data.message,
+      status: true,
     };
 
     //
@@ -73,7 +71,7 @@ async function handleLogin(username, password) {
   } catch (error) {
     console.error("Login error: ", error);
     return {
-      success: false,
+      status: false,
       message: handleApiError(error),
     };
   }
@@ -84,8 +82,6 @@ const handleApiError = (error) => {
     switch (error.response.status) {
       case 400:
         return "Invalid credentials.";
-      case 500:
-        return "Server error.";
       default:
         return "An error occurred. Please try again";
     }
