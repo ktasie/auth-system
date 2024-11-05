@@ -9,7 +9,7 @@ import { RequestHandlerParams } from 'express-serve-static-core';
 const app = express();
 
 //middlewares
-app.use(express.static('public'));
+app.use(express.static('./'));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -71,7 +71,7 @@ app.get(
   '/dashboard',
   protect as RequestHandlerParams,
   (req: Request, res: Response) => {
-    res.status(200).sendFile(`${__dirname}/dashboard.html`);
+    res.status(200).sendFile(`${__dirname}/landing.html`);
   }
 );
 
