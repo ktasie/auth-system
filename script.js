@@ -15,27 +15,23 @@ btn.addEventListener("submit", async (e) => {
   const errorDisplay = document.getElementById("errorMessage");
   errorDisplay.style.display = "none";
 
-  setTimeout(async () => {
-    //alert("Delayed for 5 seconds");
+  const result = await handleLogin(username, password);
 
-    const result = await handleLogin(username, password);
-
-    try {
-      if (result.success) {
-        // Post to the API_URL
-        window.location.href = "/dashboard.html";
-      } else {
-        errorDisplay.textContent = result.message;
-        errorDisplay.style.display = "block";
-      }
-    } finally {
-      // TODO:  Implement spinner for summit button done
-
-      /* btn.classList.remove("spinner"); */
-      document.getElementById("spinner").style.display = "none";
-      btn.form.disabled = false;
+  try {
+    if (result.success) {
+      // Post to the API_URL
+      window.location.href = "/dashboard.html";
+    } else {
+      errorDisplay.textContent = result.message;
+      errorDisplay.style.display = "block";
     }
-  }, 5000);
+  } finally {
+    // TODO:  Implement spinner for summit button done
+
+    /* btn.classList.remove("spinner"); */
+    document.getElementById("spinner").style.display = "none";
+    btn.form.disabled = false;
+  }
 
   //
   //
