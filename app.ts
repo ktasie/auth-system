@@ -51,11 +51,11 @@ const generateToken = (id: number): string => {
 const protect = async (req: Request, res: Response, next: NextFunction) => {
   let id;
   const token = req.cookies['jwt'];
-  if (!token) return res.status(401).json({ message: 'Access denied' });
+  if (!token) return res.redirect('/');
 
   //const promiseVerify = util.promisify(jwt.verify):Promise<>;
   jwt.verify(token, process.env.JWT_SECRET as string, (err: any, id: any) => {
-    if (err) return res.status(403).json({ message: 'Invalid token' });
+    if (err) return res.redirect('/');
     (req as any).id = id;
     next();
   });
