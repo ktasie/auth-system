@@ -6,26 +6,27 @@ const CONFIG = {
 };
 
 btn.addEventListener('submit', async (e) => {
+  try {
   e.preventDefault();
 
   /* btn.classList.add("spinner"); */
-  document.getElementById('spinner').style.display = 'block';
+  document.querySelector('.spin').style.display = 'block';
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
   const errorDisplay = document.getElementById('errorMessage');
-  errorDisplay.style.display = 'none';
+  //errorDisplay.style.display = 'none';
 
   const result = await handleLogin(username, password);
 
-  try {
-    if (result.status) {
+  
+    if (result.status === 'success') {
       // Post to the API_URL
       window.location.href = '/dashboard';
     } else {
       errorDisplay.textContent = result.message;
-      errorDisplay.style.display = 'block';
+      //errorDisplay.style.display = 'block';
     }
-  } finally {
+  } catch(err) {
     // TODO:  Implement spinner for summit button done
 
     /* btn.classList.remove("spinner"); */
