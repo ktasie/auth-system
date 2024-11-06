@@ -117,6 +117,13 @@ app.post('/api/v1/submit', async (req: Request, res: Response) => {
   }
 });
 
+app.all('*', (req: Request, res: Response) => {
+  res.status(404).json({
+    status: 'fail',
+    message: 'This route is currently unavailable',
+  });
+});
+
 //
 app.listen(3000, () => {
   console.log('App running on ports 3000');
