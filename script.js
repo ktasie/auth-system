@@ -1,36 +1,36 @@
-const btn = document.querySelector("#loginForm");
+const btn = document.querySelector('#loginForm');
 
 const CONFIG = {
-  API_URL: "",
-  TOKEN_KEY: "",
+  API_URL: '/api/v1/submit',
+  TOKEN_KEY: '',
 };
 
-btn.addEventListener("submit", async (e) => {
+btn.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   /* btn.classList.add("spinner"); */
-  document.getElementById("spinner").style.display = "block";
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const errorDisplay = document.getElementById("errorMessage");
-  errorDisplay.style.display = "none";
+  document.getElementById('spinner').style.display = 'block';
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const errorDisplay = document.getElementById('errorMessage');
+  errorDisplay.style.display = 'none';
 
   const result = await handleLogin(username, password);
 
   try {
     if (result.status) {
       // Post to the API_URL
-      window.location.href = "/dashboard.html";
+      window.location.href = '/dashboard';
     } else {
       errorDisplay.textContent = result.message;
-      errorDisplay.style.display = "block";
+      errorDisplay.style.display = 'block';
     }
   } finally {
     // TODO:  Implement spinner for summit button done
 
     /* btn.classList.remove("spinner"); */
-    document.getElementById("spinner").style.display = "none";
-    btn.form.disabled = false;
+    document.getElementById('spinner').style.display = 'none';
+    // btn.form.disabled = false;
   }
 
   //
@@ -45,15 +45,15 @@ async function handleLogin(username, password) {
     };
 
     const response = await fetch(CONFIG.API_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify(loginData),
     });
 
-    if (!response.status === "success") {
+    if (!response.status === 'success') {
       throw new Error(await response.text());
     }
 
@@ -69,7 +69,7 @@ async function handleLogin(username, password) {
     //
     //
   } catch (error) {
-    console.error("Login error: ", error);
+    console.error('Login error: ', error);
     return {
       status: false,
       message: handleApiError(error),
@@ -81,13 +81,13 @@ const handleApiError = (error) => {
   if (error.response) {
     switch (error.response.status) {
       case 400:
-        return "Invalid credentials.";
+        return 'Invalid credentials.';
       default:
-        return "An error occurred. Please try again";
+        return 'An error occurred. Please try again';
     }
   }
 
-  return "Network error. Please check your connection";
+  return 'Network error. Please check your connection';
 };
 
 // const storeTokens = (tokens) => {
