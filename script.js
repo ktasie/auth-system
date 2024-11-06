@@ -2,40 +2,23 @@ const btn = document.querySelector('#loginForm');
 
 const CONFIG = {
   API_URL: '/api/v1/submit',
-  TOKEN_KEY: '',
 };
 
-btn.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  /* btn.classList.add("spinner"); */
-  document.getElementById('spinner').style.display = 'block';
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  const errorDisplay = document.getElementById('errorMessage');
-  errorDisplay.style.display = 'none';
-
-  const result = await handleLogin(username, password);
-
-  try {
-    if (result.status) {
-      // Post to the API_URL
-      window.location.href = '/dashboard';
-    } else {
-      errorDisplay.textContent = result.message;
-      errorDisplay.style.display = 'block';
+const handleApiError = (error) => {
+  if (error.status) {
+    return error.message;
+  } else {
+    switch (error.message) {
+      case 'Access Denied':
+        window.location.href = '/';
+      case 'Invalid token':
+        window.location.href = '/';
+      default:
+        return error.message;
     }
-  } finally {
-    // TODO:  Implement spinner for summit button done
-
-    /* btn.classList.remove("spinner"); */
-    document.getElementById('spinner').style.display = 'none';
-    // btn.form.disabled = false;
   }
-
-  //
-  //
-});
+  return 'An error occured. Please try again';
+};
 
 async function handleLogin(username, password) {
   try {
@@ -53,11 +36,9 @@ async function handleLogin(username, password) {
       body: JSON.stringify(loginData),
     });
 
-    if (!response.status === 'success') {
+    if (!response.ok) {
       throw new Error(await response.text());
     }
-
-    const data = await response.json();
 
     // Implement Store tokens
     // storeTokens(data);
@@ -69,26 +50,54 @@ async function handleLogin(username, password) {
     //
     //
   } catch (error) {
-    console.error('Login error: ', error);
+    let errorMessage;
+
+    try {
+      const parsedError = JSON.parse(error.message);
+      errorMessage = handleApiError(parsedError);
+    } catch (parseError) {
+      errorMessage = handleApiError(error);
+    }
+
     return {
       status: false,
-      message: handleApiError(error),
+      message: errorMessage,
     };
   }
 }
 
-const handleApiError = (error) => {
-  if (error.response) {
-    switch (error.response.status) {
-      case 400:
-        return 'Invalid credentials.';
-      default:
-        return 'An error occurred. Please try again';
-    }
-  }
+btn.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-  return 'Network error. Please check your connection';
-};
+  /* btn.classList.add("spinner"); */
+  document.getElementById('spinner').style.display = 'block';
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const errorDisplay = document.getElementById('errorMessage');
+  errorDisplay.style.display = 'none';
+
+  setTimeout(async () => {
+    const result = await handleLogin(username, password);
+
+    try {
+      if (result.status) {
+        window.location.href = '/dashboard';
+      } else {
+        errorDisplay.textContent = result.message;
+        errorDisplay.style.display = 'block';
+      }
+    } finally {
+      // TODO:  Implement spinner for summit button done
+
+      /* btn.classList.remove("spinner"); */
+      document.getElementById('spinner').style.display = 'none';
+      // btn.form.disabled = false;
+    }
+  }, 1000);
+
+  //
+  //
+});
 
 // const storeTokens = (tokens) => {
 //   localStorage.setItem(CONFIG.TOKEN_KEY, tokens.token);
